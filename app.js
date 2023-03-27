@@ -1,3 +1,5 @@
+const shelf = document.getElementById("shelf");
+
 let myLibrary = [];
 
 function Book(title, author, pages, read) {
@@ -6,13 +8,6 @@ function Book(title, author, pages, read) {
   this.author = author;
   this.pages = pages;
   this.read = read;
-  this.info = function () {
-    if (read) {
-      return `${title} by ${author}, ${pages} pages, read`;
-    } else {
-      return `${title} by ${author}, ${pages} pages, not read yet`;
-    }
-  };
 }
 
 function addBookToLibrary(titleInput, authorInput, pagesInput, readInput) {
@@ -22,7 +17,47 @@ function addBookToLibrary(titleInput, authorInput, pagesInput, readInput) {
 }
 
 function displayBooks() {
-  for (book of myLibrary) {
-    console.log(book.info());
-  }
+  myLibrary.forEach((book) => {
+    const bookNode = document.createElement("div");
+    bookNode.classList.add("book-card");
+
+    const title = document.createElement("p");
+    title.classList.add("book-title");
+    const titleNode = document.createTextNode(book.title);
+    title.appendChild(titleNode);
+    bookNode.appendChild(title);
+
+    const author = document.createElement("p");
+    author.classList.add("book-author");
+    author.textContent = book.author;
+    bookNode.appendChild(author);
+
+    const pages = document.createElement("p");
+    pages.classList.add("book-pages");
+    pages.textContent = `${book.pages} pages`;
+    bookNode.appendChild(pages);
+
+    const readBtn = document.createElement("button");
+    if (book.read) {
+      readBtn.classList.add("book-read");
+      readBtn.textContent = "Read";
+    } else {
+      readBtn.classList.add("book-not-read");
+      readBtn.textContent = "Not read";
+    }
+    bookNode.appendChild(readBtn);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.classList.add("book-remove-btn");
+    removeBtn.textContent = "Remove";
+    bookNode.appendChild(removeBtn);
+
+    console.log(bookNode);
+    shelf.appendChild(bookNode);
+  });
 }
+
+const testBook = new Book("TestBook", "Ryan", 26, true);
+myLibrary.push(testBook);
+
+displayBooks();
