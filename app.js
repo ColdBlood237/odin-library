@@ -37,7 +37,12 @@ function displayBooks() {
     pages.textContent = `${book.pages} pages`;
     bookNode.appendChild(pages);
 
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("btn-container");
+    bookNode.appendChild(btnContainer);
+
     const readBtn = document.createElement("button");
+    readBtn.classList.add("read-btn");
     if (book.read) {
       readBtn.classList.add("book-read");
       readBtn.textContent = "Read";
@@ -45,19 +50,43 @@ function displayBooks() {
       readBtn.classList.add("book-not-read");
       readBtn.textContent = "Not read";
     }
-    bookNode.appendChild(readBtn);
+    btnContainer.appendChild(readBtn);
 
     const removeBtn = document.createElement("button");
     removeBtn.classList.add("book-remove-btn");
     removeBtn.textContent = "Remove";
-    bookNode.appendChild(removeBtn);
+    btnContainer.appendChild(removeBtn);
 
     console.log(bookNode);
     shelf.appendChild(bookNode);
   });
 }
 
+function switchRead() {
+  const readBtns = document.querySelectorAll(".read-btn");
+  readBtns.forEach((readBtn) =>
+    readBtn.addEventListener("click", () => {
+      if (readBtn.classList.contains("book-read")) {
+        readBtn.classList.replace("book-read", "book-not-read");
+        readBtn.textContent = "Not read";
+      } else {
+        readBtn.classList.replace("book-not-read", "book-read");
+        readBtn.textContent = "Read";
+      }
+    })
+  );
+}
+
 const testBook = new Book("TestBook", "Ryan", 26, true);
 myLibrary.push(testBook);
 
+const berserk = new Book("Berserk", "Kentaro Miura", 456, true);
+myLibrary.push(berserk);
+
+const solo = new Book("Solo levelling", "Chugong", 320, true);
+myLibrary.push(solo);
+
+console.log(myLibrary);
+
 displayBooks();
+switchRead();
