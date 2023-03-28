@@ -11,11 +11,25 @@
     </head>
 
     <body>
+
+        <form action="" method="post" id="add-form">
+            <h3>Add new book</h3>
+            <div><input type="text" placeholder="Title" name="title" id="title"></div>
+            <div><input type="text" placeholder="Author" name="author" id="author"></div>
+            <div><input type="number" placeholder="Pages" name="pages" id="pages"></div>
+            <div class="checkbox-container">
+                <label for="read">Have you read it ?</label>
+                <input type="checkbox" name="read" id="read">
+            </div>
+            <button id="submit">Submit</button>
+        </form>
+
         <div class="header">
             <h1>library</h1>
         </div>
+
         <div class="main">
-            <div class="add-btn-container"><button class="add-btn">+ add book</button></div>
+            <div class="add-btn-container"><button class="add-btn">+ Add book</button></div>
             <div id="shelf"></div>
         </div>
     </body>

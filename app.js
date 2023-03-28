@@ -1,6 +1,9 @@
 const shelf = document.getElementById("shelf");
-
+const addBtn = document.querySelector(".add-btn");
+const form = document.getElementById("add-form");
+const submit = document.getElementById("submit");
 let myLibrary = [];
+let formOpen = false;
 
 function Book(title, author, pages, read) {
   // the constructor...
@@ -77,13 +80,23 @@ function switchRead() {
   );
 }
 
-const testBook = new Book("TestBook", "Ryan", 26, true);
+// addBtn.addEventListener("click", () => {
+//   form.style.display = "flex";
+// });
+
+document.addEventListener("click", (e) => {
+  if (e.target === submit || !e.target.closest("#add-form")) {
+    form.style.display = "none";
+  }
+});
+
+const testBook = new Book('"TestBook"', "Ryan", 26, true);
 myLibrary.push(testBook);
 
-const berserk = new Book("Berserk", "Kentaro Miura", 456, true);
+const berserk = new Book('"Berserk"', "Kentaro Miura", 456, true);
 myLibrary.push(berserk);
 
-const solo = new Book("Solo levelling", "Chugong", 320, true);
+const solo = new Book('"Solo levelling"', "Chugong", 320, true);
 myLibrary.push(solo);
 
 console.log(myLibrary);
