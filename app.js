@@ -6,65 +6,76 @@ const page = document.querySelector("body");
 const close = document.getElementById("close-form");
 
 let myLibrary = [];
+let booksOnScreen = [];
 let formOpen = false;
+let index = 0;
+let buttonIndex = 0;
 
-function Book(title, author, pages, read) {
+function Book(title, author, pages, read, data) {
   // the constructor...
   this.title = title;
   this.author = author;
   this.pages = pages;
   this.read = read;
+  this.data = data;
 }
 
 function addBookToLibrary(titleInput, authorInput, pagesInput, readInput) {
   // do stuff here
-  const book = new Book(titleInput, authorInput, pagesInput, readInput);
+  const book = new Book(titleInput, authorInput, pagesInput, readInput, index);
   myLibrary.push(book);
+  index++;
+  displayBooks();
 }
 
 function displayBooks() {
   myLibrary.forEach((book) => {
-    const bookNode = document.createElement("div");
-    bookNode.classList.add("book-card");
+    if (!booksOnScreen.includes(book.data)) {
+      const bookNode = document.createElement("div");
+      bookNode.classList.add("book-card");
+      bookNode.setAttribute("id", book.data);
 
-    const title = document.createElement("p");
-    title.classList.add("book-title");
-    const titleNode = document.createTextNode(book.title);
-    title.appendChild(titleNode);
-    bookNode.appendChild(title);
+      const title = document.createElement("p");
+      title.classList.add("book-title");
+      const titleNode = document.createTextNode(book.title);
+      title.appendChild(titleNode);
+      bookNode.appendChild(title);
 
-    const author = document.createElement("p");
-    author.classList.add("book-author");
-    author.textContent = book.author;
-    bookNode.appendChild(author);
+      const author = document.createElement("p");
+      author.classList.add("book-author");
+      author.textContent = book.author;
+      bookNode.appendChild(author);
 
-    const pages = document.createElement("p");
-    pages.classList.add("book-pages");
-    pages.textContent = `${book.pages} pages`;
-    bookNode.appendChild(pages);
+      const pages = document.createElement("p");
+      pages.classList.add("book-pages");
+      pages.textContent = `${book.pages} pages`;
+      bookNode.appendChild(pages);
 
-    const btnContainer = document.createElement("div");
-    btnContainer.classList.add("btn-container");
-    bookNode.appendChild(btnContainer);
+      const btnContainer = document.createElement("div");
+      btnContainer.classList.add("btn-container");
+      bookNode.appendChild(btnContainer);
 
-    const readBtn = document.createElement("button");
-    readBtn.classList.add("read-btn");
-    if (book.read) {
-      readBtn.classList.add("book-read");
-      readBtn.textContent = "Read";
-    } else {
-      readBtn.classList.add("book-not-read");
-      readBtn.textContent = "Not read";
+      const readBtn = document.createElement("button");
+      readBtn.classList.add("read-btn");
+      if (book.read) {
+        readBtn.classList.add("book-read");
+        readBtn.textContent = "Read";
+      } else {
+        readBtn.classList.add("book-not-read");
+        readBtn.textContent = "Not read";
+      }
+      btnContainer.appendChild(readBtn);
+
+      const removeBtn = document.createElement("button");
+      removeBtn.classList.add("book-remove-btn");
+      removeBtn.classList.add(buttonIndex);
+      removeBtn.textContent = "Remove";
+      btnContainer.appendChild(removeBtn);
+
+      shelf.appendChild(bookNode);
+      booksOnScreen.push(book.data);
+      buttonIndex++;
     }
-    btnContainer.appendChild(readBtn);
-
-    const removeBtn = document.createElement("button");
-    removeBtn.classList.add("book-remove-btn");
-    removeBtn.textContent = "Remove";
-    btnContainer.appendChild(removeBtn);
-
-    console.log(bookNode);
-    shelf.appendChild(bookNode);
   });
 }
 
@@ -83,6 +94,29 @@ function switchRead() {
   );
 }
 
+function remove() {
+  const removeBtns = document.querySelectorAll(".book-remove-btn");
+  removeBtns.forEach((removeBtn) => {
+    removeBtn.addEventListener("click", (e) => {
+      const buttonNumber = e.target.classList[1];
+      // remove book from library array
+      myLibrary = myLibrary.filter((book) => {
+        return book.data != buttonNumber;
+      });
+
+      // remove book from books on screen array
+      const indexBookToRemove = booksOnScreen.indexOf(Number(buttonNumber));
+      booksOnScreen.splice(indexBookToRemove, 1);
+
+      console.log(myLibrary, booksOnScreen);
+
+      // remove book from DOM
+      const bookToRemove = document.getElementById(buttonNumber);
+      bookToRemove.remove();
+    });
+  });
+}
+
 addBtn.addEventListener("click", () => {
   form.style.display = "flex";
 });
@@ -91,30 +125,32 @@ addBtn.addEventListener("click", () => {
 document.addEventListener("click", (e) => {
   if (
     e.target !== addBtn &&
-    (e.target === close ||
-      e.target === submit ||
-      !e.target.closest("#add-form"))
+    (e.target === close || !e.target.closest("#add-form"))
   ) {
     form.style.display = "none";
-    e.preventDefault();
   }
 });
 
-submit.addEventListener("click", (e) => {
+form.addEventListener("submit", (e) => {
   e.preventDefault();
+  const title = document.getElementById("title").value;
+  const author = document.getElementById("author").value;
+  const pages = document.getElementById("pages").value;
+  const read = document.getElementById("read").checked;
+  console.log(read);
+  addBookToLibrary('"' + title + '"', author, pages, read);
+  switchRead();
+  remove();
+  form.reset();
+  console.log(myLibrary);
 });
 
 // test books
-const testBook = new Book('"TestBook"', "Ryan", 26, true);
-myLibrary.push(testBook);
+addBookToLibrary('"TestBook"', "Ryan", 26, true);
+addBookToLibrary('"Berserk"', "Kentaro Miura", 456, true);
+addBookToLibrary('"Solo levelling"', "Chugong", 320, true);
 
-const berserk = new Book('"Berserk"', "Kentaro Miura", 456, true);
-myLibrary.push(berserk);
-
-const solo = new Book('"Solo levelling"', "Chugong", 320, true);
-myLibrary.push(solo);
-
-console.log(myLibrary);
-
-displayBooks();
 switchRead();
+remove();
+
+console.log(booksOnScreen);

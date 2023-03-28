@@ -147,6 +147,10 @@ input[type="number"] {
   padding: 8px;
 }
 
+#pages:invalid {
+  border: 2px solid lightcoral;
+}
+
 .checkbox-container * {
   cursor: pointer;
 }
