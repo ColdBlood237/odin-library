@@ -50,7 +50,7 @@ h1 {
 
 #shelf {
   display: grid;
-  margin: 0 5%;
+  margin: 0 15%;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   justify-content: center;
   gap: 40px;
@@ -105,8 +105,8 @@ h1 {
 #add-form {
   box-sizing: border-box;
   position: fixed;
-  display: flex;
-  top: calc(50% - 175px);
+  display: none;
+  top: 15%;
   left: calc(50% - 150px);
   box-shadow: 0px 0px 5px 100vh rgba(0, 0, 0, 0.5);
   flex-direction: column;
@@ -117,6 +117,22 @@ h1 {
   padding: 20px;
   gap: 20px;
   font-size: 20px;
+}
+
+.form-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#close-form {
+  align-self: flex-start;
+  border: 0;
+  background-color: #f08080;
+  border-radius: 100%;
+  padding: 6px 10px;
+  cursor: pointer;
 }
 
 #add-form > h3 {
@@ -135,7 +151,7 @@ input[type="number"] {
   cursor: pointer;
 }
 
-#add-form > button {
+#submit {
   border: 0;
   background-color: #90ee90;
   font-size: 20px;

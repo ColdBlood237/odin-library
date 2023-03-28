@@ -2,6 +2,9 @@ const shelf = document.getElementById("shelf");
 const addBtn = document.querySelector(".add-btn");
 const form = document.getElementById("add-form");
 const submit = document.getElementById("submit");
+const page = document.querySelector("body");
+const close = document.getElementById("close-form");
+
 let myLibrary = [];
 let formOpen = false;
 
@@ -80,16 +83,28 @@ function switchRead() {
   );
 }
 
-// addBtn.addEventListener("click", () => {
-//   form.style.display = "flex";
-// });
+addBtn.addEventListener("click", () => {
+  form.style.display = "flex";
+});
 
+// close the form
 document.addEventListener("click", (e) => {
-  if (e.target === submit || !e.target.closest("#add-form")) {
+  if (
+    e.target !== addBtn &&
+    (e.target === close ||
+      e.target === submit ||
+      !e.target.closest("#add-form"))
+  ) {
     form.style.display = "none";
+    e.preventDefault();
   }
 });
 
+submit.addEventListener("click", (e) => {
+  e.preventDefault();
+});
+
+// test books
 const testBook = new Book('"TestBook"', "Ryan", 26, true);
 myLibrary.push(testBook);
 
