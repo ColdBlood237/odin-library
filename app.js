@@ -11,13 +11,14 @@ let formOpen = false;
 let index = 0;
 let buttonIndex = 0;
 
-function Book(title, author, pages, read, data) {
-  // the constructor...
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.read = read;
-  this.data = data;
+class Book {
+  constructor(title, author, pages, read, data) {
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.read = read;
+    this.data = data;
+  }
 }
 
 function addBookToLibrary(titleInput, authorInput, pagesInput, readInput) {
