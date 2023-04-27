@@ -153,5 +153,3 @@ addBookToLibrary('"Solo levelling"', "Chugong", 320, true);
 
 switchRead();
 remove();
-
-console.log(booksOnScreen);
