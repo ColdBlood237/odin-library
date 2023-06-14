@@ -10,6 +10,7 @@ import {
   getDocs,
   deleteDoc,
   doc,
+  updateDoc,
 } from "firebase/firestore";
 
 // TODO: Replace the following with your app's Firebase project configuration
@@ -89,7 +90,7 @@ async function displayBooks() {
       bookNode.appendChild(btnContainer);
 
       const readBtn = document.createElement("button");
-      readBtn.classList.add("read-btn");
+      readBtn.classList.add("read-btn", book.id);
       if (book.data().read) {
         readBtn.classList.add("book-read");
         readBtn.textContent = "Read";
@@ -117,11 +118,18 @@ async function displayBooks() {
 function switchRead() {
   const readBtns = document.querySelectorAll(".read-btn");
   readBtns.forEach((readBtn) =>
-    readBtn.addEventListener("click", () => {
+    readBtn.addEventListener("click", async () => {
+      const bookId = readBtn.classList[1];
       if (readBtn.classList.contains("book-read")) {
+        await updateDoc(doc(db, "books", bookId), {
+          read: false,
+        });
         readBtn.classList.replace("book-read", "book-not-read");
         readBtn.textContent = "Not read";
       } else {
+        await updateDoc(doc(db, "books", bookId), {
+          read: true,
+        });
         readBtn.classList.replace("book-not-read", "book-read");
         readBtn.textContent = "Read";
       }
