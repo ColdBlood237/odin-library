@@ -1,3 +1,5 @@
+import "./styles.css";
+
 const shelf = document.getElementById("shelf");
 const addBtn = document.querySelector(".add-btn");
 const form = document.getElementById("add-form");
