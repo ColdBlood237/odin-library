@@ -1,5 +1,23 @@
 import "./styles.css";
 
+//////////////////////// FIREBASE STUFF //////////////////////////////////
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+
+// TODO: Replace the following with your app's Firebase project configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCvNdTxbOBMokb4IfsLmtnOxDF5re1xYps",
+  authDomain: "odin-library-9287e.firebaseapp.com",
+  projectId: "odin-library-9287e",
+  storageBucket: "odin-library-9287e.appspot.com",
+  messagingSenderId: "887607140477",
+  appId: "1:887607140477:web:5ed8e814edd5e6a7fa5114",
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
 const shelf = document.getElementById("shelf");
 const addBtn = document.querySelector(".add-btn");
 const form = document.getElementById("add-form");
@@ -9,7 +27,6 @@ const close = document.getElementById("close-form");
 
 let myLibrary = [];
 let booksOnScreen = [];
-let formOpen = false;
 let index = 0;
 let buttonIndex = 0;
 
@@ -23,12 +40,28 @@ class Book {
   }
 }
 
-function addBookToLibrary(titleInput, authorInput, pagesInput, readInput) {
+async function addBookToLibrary(
+  titleInput,
+  authorInput,
+  pagesInput,
+  readInput
+) {
   // do stuff here
-  const book = new Book(titleInput, authorInput, pagesInput, readInput, index);
-  myLibrary.push(book);
-  index++;
-  displayBooks();
+  // const book = new Book(titleInput, authorInput, pagesInput, readInput, index);
+  // myLibrary.push(book);
+  // index++;
+  // displayBooks();
+  try {
+    const docRef = await addDoc(collection(db, "books"), {
+      title: titleInput,
+      author: authorInput,
+      pages: pagesInput,
+      read: readInput,
+    });
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
 }
 
 function displayBooks() {
@@ -147,11 +180,6 @@ form.addEventListener("submit", (e) => {
   form.reset();
   console.log(myLibrary);
 });
-
-// test books
-addBookToLibrary('"TestBook"', "Ryan", 26, true);
-addBookToLibrary('"Berserk"', "Kentaro Miura", 456, true);
-addBookToLibrary('"Solo levelling"', "Chugong", 320, true);
 
 switchRead();
 remove();
