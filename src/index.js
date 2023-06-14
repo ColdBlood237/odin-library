@@ -1,8 +1,16 @@
+import uniqid from "uniqid";
 import "./styles.css";
 
 //////////////////////// FIREBASE STUFF //////////////////////////////////
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 
 // TODO: Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
@@ -25,20 +33,9 @@ const submit = document.getElementById("submit");
 const page = document.querySelector("body");
 const close = document.getElementById("close-form");
 
-let myLibrary = [];
+//let myLibrary = [];
 let booksOnScreen = [];
-let index = 0;
 let buttonIndex = 0;
-
-class Book {
-  constructor(title, author, pages, read, data) {
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.read = read;
-    this.data = data;
-  }
-}
 
 async function addBookToLibrary(
   titleInput,
@@ -46,11 +43,6 @@ async function addBookToLibrary(
   pagesInput,
   readInput
 ) {
-  // do stuff here
-  // const book = new Book(titleInput, authorInput, pagesInput, readInput, index);
-  // myLibrary.push(book);
-  // index++;
-  // displayBooks();
   try {
     const docRef = await addDoc(collection(db, "books"), {
       title: titleInput,
@@ -62,29 +54,34 @@ async function addBookToLibrary(
   } catch (e) {
     console.error("Error adding document: ", e);
   }
+  displayBooks();
 }
 
-function displayBooks() {
+async function displayBooks() {
+  const myLibrary = await getDocs(collection(db, "books"));
+
   myLibrary.forEach((book) => {
-    if (!booksOnScreen.includes(book.data)) {
+    if (!booksOnScreen.includes(book.id)) {
       const bookNode = document.createElement("div");
       bookNode.classList.add("book-card");
-      bookNode.setAttribute("id", book.data);
+      bookNode.setAttribute("id", book.id);
 
       const title = document.createElement("p");
       title.classList.add("book-title");
-      const titleNode = document.createTextNode(book.title);
+      const titleNode = document.createTextNode(
+        '"' + `${book.data().title}` + '"'
+      );
       title.appendChild(titleNode);
       bookNode.appendChild(title);
 
       const author = document.createElement("p");
       author.classList.add("book-author");
-      author.textContent = book.author;
+      author.textContent = book.data().author;
       bookNode.appendChild(author);
 
       const pages = document.createElement("p");
       pages.classList.add("book-pages");
-      pages.textContent = `${book.pages} pages`;
+      pages.textContent = `${book.data().pages} pages`;
       bookNode.appendChild(pages);
 
       const btnContainer = document.createElement("div");
@@ -93,7 +90,7 @@ function displayBooks() {
 
       const readBtn = document.createElement("button");
       readBtn.classList.add("read-btn");
-      if (book.read) {
+      if (book.data().read) {
         readBtn.classList.add("book-read");
         readBtn.textContent = "Read";
       } else {
@@ -104,15 +101,17 @@ function displayBooks() {
 
       const removeBtn = document.createElement("button");
       removeBtn.classList.add("book-remove-btn");
-      removeBtn.classList.add(buttonIndex);
+      removeBtn.classList.add(book.id);
       removeBtn.textContent = "Remove";
       btnContainer.appendChild(removeBtn);
 
       shelf.appendChild(bookNode);
-      booksOnScreen.push(book.data);
+      booksOnScreen.push(book.id);
       buttonIndex++;
     }
   });
+  switchRead();
+  remove();
 }
 
 function switchRead() {
@@ -133,21 +132,18 @@ function switchRead() {
 function remove() {
   const removeBtns = document.querySelectorAll(".book-remove-btn");
   removeBtns.forEach((removeBtn) => {
-    removeBtn.addEventListener("click", (e) => {
-      const buttonNumber = e.target.classList[1];
+    removeBtn.addEventListener("click", async (e) => {
+      console.log("remove() called");
+      const bookId = e.target.classList[1];
       // remove book from library array
-      myLibrary = myLibrary.filter((book) => {
-        return book.data != buttonNumber;
-      });
+      await deleteDoc(doc(db, "books", bookId));
 
       // remove book from books on screen array
-      const indexBookToRemove = booksOnScreen.indexOf(Number(buttonNumber));
+      const indexBookToRemove = booksOnScreen.indexOf(Number(bookId));
       booksOnScreen.splice(indexBookToRemove, 1);
 
-      console.log(myLibrary, booksOnScreen);
-
       // remove book from DOM
-      const bookToRemove = document.getElementById(buttonNumber);
+      const bookToRemove = document.getElementById(bookId);
       bookToRemove.remove();
     });
   });
@@ -173,13 +169,12 @@ form.addEventListener("submit", (e) => {
   const author = document.getElementById("author").value;
   const pages = document.getElementById("pages").value;
   const read = document.getElementById("read").checked;
-  console.log(read);
-  addBookToLibrary('"' + title + '"', author, pages, read);
+  addBookToLibrary(title, author, pages, read);
   switchRead();
   remove();
   form.reset();
-  console.log(myLibrary);
 });
 
 switchRead();
 remove();
+displayBooks();
